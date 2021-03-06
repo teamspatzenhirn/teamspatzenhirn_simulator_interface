@@ -40,7 +40,6 @@ class SimulatorSpatzInput : public adtf_helper::Filter<adtf::cFilter>, private c
 
     int failCounter;
 
-    bool prevBinaryLightSensorTriggered;
     bool prevPaused;
 
     Pin<adtf_types::Spatz> pinSpatzOut = {this, "spatz", PinType::Output};

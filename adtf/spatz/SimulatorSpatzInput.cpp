@@ -7,7 +7,6 @@ ADTF_FILTER_PLUGIN("Simulator Spatz Input", OID_ADTF_SIMULATOR_SPATZ_INPUT, Simu
 SimulatorSpatzInput::SimulatorSpatzInput(const tChar *__info) :
     Filter<cFilter>(__info),
     rx(SimulatorSHM::CLIENT, SHM_HWIN_ID),
-    prevBinaryLightSensorTriggered(false),
     prevPaused(true) {
 }
 
@@ -69,22 +68,18 @@ tResult SimulatorSpatzInput::ThreadFunc() {
         failCounter = 0;
 
         // Sending spatz:
+        auto t = inobj->time;
+        auto pose = math::v3d{inobj->x, inobj->y, inobj->psi};
+        auto vel = math::v2d{inobj->velX, inobj->velY};
+        auto acc = math::v3d{inobj->accX, inobj->accY, 0};
+        auto dPsi = inobj->dPsi;
+        auto steerAngle = inobj->steeringAngle;
+        auto laser = inobj->laserSensorValue;
 
-        env::Spatz spatz(0, cv::Point3d{inobj->x, inobj->y, inobj->psi});
-        spatz.setVel(cv::Point3d{inobj->velX, inobj->velY, 0});
-        spatz.setSteerAngle(inobj->steeringAngle);
-        spatz.setdRot(cv::Point3d(0, 0, inobj->dPsi));
-        spatz.setAcc(cv::Point3d{inobj->accX, inobj->accY, 0});
-        spatz.alpha_front = inobj->alphaFront;
-        spatz.alpha_rear = inobj->alphaRear;
-        spatz.setLaser(inobj->laserSensorValue);
-        spatz.setT(inobj->time);
-        spatz.setIntegratedDistance(inobj->drivenDistance);
+        auto sensorSide = env::SensorSide{false, inobj->binaryLightSensorTriggered};
+        auto integratedDistance = inobj->drivenDistance;
 
-        bool changed = prevBinaryLightSensorTriggered != inobj->binaryLightSensorTriggered;
-        prevBinaryLightSensorTriggered = inobj->binaryLightSensorTriggered;
-
-        spatz.setSensorIrSide(std::make_pair(changed, std::make_pair(false, inobj->binaryLightSensorTriggered)));
+        env::Spatz spatz{t, pose, vel, acc, dPsi, steerAngle, laser, sensorSide, integratedDistance};
 
         pinSpatzOut.sendData(_clock->GetStreamTime(), spatz);
         SpatzMultiplexer::submitSpatz(spatz);
