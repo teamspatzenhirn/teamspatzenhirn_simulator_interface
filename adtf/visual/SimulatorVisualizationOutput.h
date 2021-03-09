@@ -14,7 +14,7 @@
 #include "SimulatorFilters/lib/shm_ids.h"
 #include "SimulatorFilters/lib/shmcomm.h"
 #include "Spatz/adtf/adtf_type.h"
-#include "Spatz/lib/Spatz.h"
+#include "Spatz/lib/Spatz.hpp"
 #include "Spatzenhirn/adtf/adtf_types.h"
 #include "Trajectory/adtf/adtf_types.h"
 #include "Trajectory/lib/AbstractTrajectory.h"

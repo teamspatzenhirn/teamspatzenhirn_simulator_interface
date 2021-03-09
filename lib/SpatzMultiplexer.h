@@ -8,7 +8,7 @@
 #ifndef SIMULATOR_FILTERS_SPATZMULTIPLEXER_H
 #define SIMULATOR_FILTERS_SPATZMULTIPLEXER_H
 
-#include <Spatz/lib/Spatz.h>
+#include <Spatz/lib/Spatz.hpp>
 #include <mutex>
 
 class SpatzMultiplexer {
