@@ -5,6 +5,8 @@
 #ifndef SIMULATOR_FILTERS_SHM_IDS_H
 #define SIMULATOR_FILTERS_SHM_IDS_H
 
+#include <opencv2/core.hpp>
+
 #include "HardwareIO/lib/MsgIn.h"
 #include "HardwareIO/lib/RCMode.h"
 
