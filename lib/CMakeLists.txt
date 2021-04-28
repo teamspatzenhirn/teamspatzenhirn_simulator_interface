@@ -12,3 +12,5 @@ target_link_libraries(${PROJECT_NAME}
     opencv_imgcodecs
     SpatzLib
 )
+
+default_install(SharedMemLib)
