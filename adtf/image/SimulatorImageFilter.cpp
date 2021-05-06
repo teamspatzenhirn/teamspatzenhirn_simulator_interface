@@ -1,5 +1,7 @@
 #include "SimulatorImageFilter.h"
 
+#include <SimulatorFilters/lib/SimCameraCalib.hpp>
+
 ADTF_FILTER_PLUGIN("Simulator Image Input", OID_ADTF_SIMU_CAPTURE_FILTER, SimulatorImageFilter)
 
 SimulatorImageFilter::SimulatorImageFilter(const tChar *__info) :
@@ -21,17 +23,13 @@ tResult SimulatorImageFilter::Init(tInitStage eStage, __exception) {
     RETURN_IF_FAILED(Filter::Init(eStage, __exception_ptr));
 
     if (eStage == StageFirst) {
-        smartekCamParam.size = cv::Size(2048, 1536);
-        smartekCamParam.camMat = cv::Matx33f(9.173928781237458e+02, -5.290136820986728, 9.998326904945299e+02, 0,
-                                             9.419218028156137e+02, 7.995691031607540e+02, 0, 0, 1);
+        smartekCamParam.size = SIM_CAMERA_SIZE;
+        smartekCamParam.camMat = SIM_CAMERA_MATRIX;
 
-        smartekCamParam.distTanMat = cv::Matx<float, 1, 2>(0, 0);
-        smartekCamParam.distRadMat = cv::Matx<float, 1, 3>(0, 0, 0);
-        smartekCamParam.roiMat = cv::Matx33f(5.173928781237458e+02, 0, 9.798326904945299e+02, 0, 5.419218028156137e+02,
-                                             7.995691031607540e+02, 0, 0, 1);
-        smartekCamParam.toImg = cv::Matx33f(-2.761614245138336, 2.15564184397163, 177.7670489519926, -1.433403358767752,
-                                            1.200179227167082e-15, -447.7194035432522, -0.002671607254399002,
-                                            1.050521022912141e-18, 0.1655311820466083);
+        smartekCamParam.distTanMat = SIM_TANGENTIAL_DISTORTION_COEFFICIENTS;
+        smartekCamParam.distRadMat = SIM_RADIAL_DISTORTION_COEFFICIENTS;
+        smartekCamParam.roiMat = SIM_NEW_CAMERA_MATRIX;
+        smartekCamParam.toImg = SIM_FLOORPLANE_TO_IMAGE_MATRIX;
         smartekCamParam.toCar = smartekCamParam.toImg.inv();
 
         smartekCamParam.undistNeeded = false;
