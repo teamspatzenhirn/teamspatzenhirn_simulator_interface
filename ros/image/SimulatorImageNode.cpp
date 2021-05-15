@@ -31,8 +31,8 @@ SimulatorImageNode::SimulatorImageNode() :
     imagePublisher = create_publisher<sensor_msgs::msg::Image>("camera/image_raw",
                                                                rclcpp::QoS(0).best_effort().durability_volatile());
 
-    cameraInfoPublisher = create_publisher<sensor_msgs::msg::CameraInfo>(
-            "camera/camera_info", rclcpp::QoS(0).best_effort().durability_volatile());
+    cameraInfoPublisher = create_publisher<sensor_msgs::msg::CameraInfo>("camera/camera_info",
+                                                                         rclcpp::QoS(1).reliable().transient_local());
 
     extrinsicPublisher = create_publisher<spatz_interfaces::msg::ExtrinsicCalib>(
             "camera/extrinsic_calib", rclcpp::QoS(1).reliable().transient_local());
