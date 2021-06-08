@@ -1,11 +1,11 @@
 /**
  * @file SimulatorSpatzNode.hpp
- * @author ottojo
+ * @author jonasotto
  * @date 4/1/21
  */
 
-#ifndef SRC_SIMULATORSPATZNODE_HPP
-#define SRC_SIMULATORSPATZNODE_HPP
+#ifndef SIMULATORFILTERS_SIMULATORSPATZNODE_HPP
+#define SIMULATORFILTERS_SIMULATORSPATZNODE_HPP
 
 #include <SimulatorFilters/lib/shm_ids.h>
 #include <SimulatorFilters/lib/shmcomm.h>
@@ -24,6 +24,7 @@
  * Mainly publishes spatz and rc-mode.
  * Additionally publishes the laser measurement separately, map->spatz transformation, box-marker for rviz.
  * Optionally publishes simulation time from spatz input (use_sim_time parameter).
+ * @ingroup ROSNodes
  */
 class SimulatorSpatzNode : public rclcpp::Node {
   public:
@@ -73,4 +74,4 @@ class SimulatorSpatzNode : public rclcpp::Node {
     void publishStaticLaserTF();
 };
 
-#endif // SRC_SIMULATORSPATZNODE_HPP
+#endif // SIMULATORFILTERS_SIMULATORSPATZNODE_HPP
