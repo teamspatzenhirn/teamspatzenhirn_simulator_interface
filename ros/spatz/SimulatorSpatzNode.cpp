@@ -6,7 +6,6 @@
 
 #include "SimulatorSpatzNode.hpp"
 
-#include <Spatz/lib/Spatz.h>
 #include <Util/ros/spatz_conversion.hpp>
 #include <gsl/gsl>
 #include <tf2/transform_datatypes.h>

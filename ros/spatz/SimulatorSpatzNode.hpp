@@ -9,7 +9,7 @@
 
 #include <SimulatorFilters/lib/shm_ids.h>
 #include <SimulatorFilters/lib/shmcomm.h>
-#include <Spatz/lib/Spatz.h>
+#include <Spatz/lib/Spatz.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/range.hpp>
 #include <spatz_interfaces/msg/rc_mode.hpp>
