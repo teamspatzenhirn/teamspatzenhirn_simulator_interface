@@ -155,21 +155,16 @@ sensor_msgs::msg::Range SimulatorSpatzNode::buildLaserMessage(const rclcpp::Time
 }
 
 env::Spatz SimulatorSpatzNode::spatzFromHWIn(const HardwareIn &inobj) {
-    env::Spatz spatz(0, cv::Point3d{inobj.x, inobj.y, inobj.psi});
-    spatz.setVel(cv::Point3d{inobj.velX, inobj.velY, 0});
-    spatz.setSteerAngle(inobj.steeringAngle);
-    spatz.setdRot(cv::Point3d(0, 0, inobj.dPsi));
-    spatz.setAcc(cv::Point3d{inobj.accX, inobj.accY, 0});
-    spatz.alpha_front = inobj.alphaFront;
-    spatz.alpha_rear = inobj.alphaRear;
-    spatz.setLaser(inobj.laserSensorValue);
-    spatz.setT(inobj.time);
-    spatz.setIntegratedDistance(inobj.drivenDistance);
-
-    bool changed = prevBinaryLightSensorTriggered != inobj.binaryLightSensorTriggered;
-    prevBinaryLightSensorTriggered = inobj.binaryLightSensorTriggered;
-
-    spatz.setSensorIrSide(std::make_pair(changed, std::make_pair(false, inobj.binaryLightSensorTriggered)));
+    env::SensorSide sensorSide{false, inobj.binaryLightSensorTriggered};
+    env::Spatz spatz{inobj.time,
+                     math::v3d{inobj.x, inobj.y, inobj.psi},
+                     math::v2d{inobj.velX, inobj.velY},
+                     math::v3d{inobj.accX, inobj.accY, 0},
+                     inobj.dPsi,
+                     inobj.steeringAngle,
+                     inobj.laserSensorValue,
+                     sensorSide,
+                     inobj.drivenDistance};
 
     return spatz;
 }
