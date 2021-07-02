@@ -65,8 +65,9 @@ void SimulatorSpatzNode::timerCallback() {
 
     // Build and publish spatz
     auto spatz = spatzFromHWIn(*inobj);
-    RCLCPP_INFO(get_logger(), "publishing spatz");
-    spatzPublisher->publish(messageFromSpatz(spatz));
+    RCLCPP_INFO(get_logger(), "publishing spatz at x=%f, y=%f, psi=%f", spatz.getPos().x, spatz.getPos().y,
+                spatz.getPsi());
+    spatzPublisher->publish(messageFromSpatz(spatz, stamp));
 
     // Publish spatz marker for rviz
     // TODO (jonasotto, April 2021): Figure out how to send this only once, since it is frame-locked to spatz frame
