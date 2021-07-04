@@ -19,20 +19,22 @@ SimulatorHardwareNode::SimulatorHardwareNode(const std::string &name) : rclcpp::
     }
 }
 
+
+SimulatorHardwareNode::~SimulatorHardwareNode() {
+    tx.detach();
+}
+
 void SimulatorHardwareNode::onControlIn(const spatz_interfaces::msg::ControlVarsVESC::ConstSharedPtr &controlMessage) {
     auto hwOut = tx.lock(SimulatorSHM::WRITE_OVERWRITE_OLDEST);
 
     if (hwOut == nullptr) {
-        std::cerr << "Cannot send hardware output: Fifo full!" << std::endl;
-        RCLCPP_WARN(get_logger(), "SimulatorHardwareNode cannot send hardware output: FIFO full!");
+        RCLCPP_ERROR(get_logger(), "SimulatorHardwareNode cannot send hardware output: FIFO full!");
         return;
     }
 
     hwOut->vel = controlMessage->vel;
     hwOut->deltaFront = controlMessage->delta_front;
     hwOut->deltaRear = controlMessage->delta_rear;
-
-    RCLCPP_ERROR(get_logger(), "send VESC update!");
 
     tx.unlock(hwOut);
 }

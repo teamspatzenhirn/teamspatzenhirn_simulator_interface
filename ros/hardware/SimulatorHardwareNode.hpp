@@ -18,7 +18,7 @@
  */
 class SimulatorHardwareNode : public rclcpp::Node {
   public:
-    SimulatorHardwareNode(const std::string &name = "SimulatorHardwareNode");
+    explicit SimulatorHardwareNode(const std::string &name = "SimulatorHardwareNode");
     ~SimulatorHardwareNode() override;
 
     // Copy: delete to prevent bricking shared memory transport
