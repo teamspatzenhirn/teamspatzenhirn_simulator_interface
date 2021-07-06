@@ -6,7 +6,7 @@ find_package(spatz_interfaces REQUIRED)
 
 set(NODE_NAME SimulatorHardwareNode)
 
-add_executable(${NODE_NAME} SimulatorHardwareNode.cpp main.cpp)
+add_executable(${NODE_NAME} SimulatorHardwareOutNode.cpp main.cpp)
 target_link_libraries(${NODE_NAME} SharedMemLib rosUtil)
 ament_target_dependencies(${NODE_NAME}
         rclcpp
