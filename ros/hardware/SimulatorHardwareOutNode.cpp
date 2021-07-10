@@ -10,7 +10,7 @@ SimulatorHardwareOutNode::SimulatorHardwareOutNode(const std::string &name) :
     rclcpp::Node(name),
     tx(SimulatorSHM::SERVER, SHM_HWOUT_ID),
     controlSub(create_subscription<spatz_interfaces::msg::ControlSetpoint>(
-            "/vesc", rclcpp::QoS(1).reliable(),
+            "/control_setpoint", rclcpp::QoS(1).reliable(),
             [this](spatz_interfaces::msg::ControlSetpoint::ConstSharedPtr m) { onControlIn(m); })) {
     if (!tx.attach()) {
         RCLCPP_ERROR(get_logger(), "SimulatorHardwareNode cannot open shared memory interface!");
