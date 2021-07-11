@@ -1,3 +1,3 @@
 add_subdirectory(image)
 add_subdirectory(spatz)
-add_subdirectory(hardware)
+add_subdirectory(hardwareOut)
