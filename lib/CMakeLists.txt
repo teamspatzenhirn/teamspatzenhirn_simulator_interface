@@ -13,4 +13,4 @@ target_link_libraries(${PROJECT_NAME}
     SpatzLib
 )
 
-default_install(SharedMemLib)
+default_install(${PROJECT_NAME})
