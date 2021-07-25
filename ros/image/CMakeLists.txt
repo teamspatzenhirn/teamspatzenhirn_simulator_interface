@@ -12,7 +12,8 @@ target_link_libraries(SimulatorImageNode
         opencv_calib3d
         LoggingLib
         SharedMemLib
-        rosUtil)
+        rosUtil
+        opencvUtil)
 ament_target_dependencies(SimulatorImageNode rclcpp spatz_interfaces tf2_ros)
 
 install(TARGETS SimulatorImageNode
