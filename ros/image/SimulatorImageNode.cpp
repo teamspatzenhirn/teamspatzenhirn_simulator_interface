@@ -7,8 +7,8 @@
 #include "SimulatorImageNode.hpp"
 
 #include <SimulatorFilters/lib/SimCameraCalib.hpp>
+#include <Util/lib/opencv/opencv.hpp>
 #include <chrono>
-#include <opencv2/calib3d.hpp>
 #include <sensor_msgs/fill_image.hpp>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
@@ -111,31 +111,4 @@ camera::cameraParam SimulatorImageNode::getSimParams() {
     simCamParam.undistNeeded = false;
     simCamParam.isSet = true;
     return simCamParam;
-}
-
-std::pair<cv::Matx33d, cv::Vec3d> SimulatorImageNode::transformFromCamParams(const camera::cameraParam &camParam) {
-    // Default calib points from CalibTool (need z=0 to apply perspective transform)
-    std::vector<cv::Point3d> spatzCoordinatePoints = {{0.5, -0.5, 0}, {0.5, 0.5, 0}, {1.2, 0.5, 0}, {1.2, -0.5, 0}};
-
-    // Transform points to image coordinates
-    std::vector<cv::Point2d> imageCoordinates;
-    for (const auto &sp : spatzCoordinatePoints) {
-        auto imgCord = camParam.transToImg(cv::Point2f(sp.x * 1000, sp.y * 1000));
-        imageCoordinates.emplace_back(imgCord);
-    }
-
-    auto roiMat = camParam.roiMat;
-    cv::Vec<double, 3> rotationVector;
-    cv::Vec<double, 3> translation;
-    cv::Matx<float, 1, 5> coeffs(camParam.distRadMat(0, 0), camParam.distRadMat(0, 1), camParam.distTanMat(0, 0),
-                                 camParam.distTanMat(0, 1), camParam.distRadMat(0, 2));
-
-    // Solve for rotation rotationVector and translation translation
-    cv::solvePnP(spatzCoordinatePoints, imageCoordinates, roiMat, coeffs, rotationVector, translation);
-
-    // Rotation vector to matrix
-    cv::Matx<double, 3, 3> rotationMatrix;
-    cv::Rodrigues(rotationVector, rotationMatrix);
-
-    return {rotationMatrix, translation};
 }

@@ -54,13 +54,6 @@ class SimulatorImageNode : public rclcpp::Node {
     tf2_ros::StaticTransformBroadcaster cameraFrameBroadcaster;
 
     static camera::cameraParam getSimParams();
-
-    /**
-     * Calculates transformation from 3D point too camera coordinate frame using to_img perspective transform in
-     * camParam. See OpenCV solvePnP documentation for details.
-     * @return Rotation matrix, Translation vector
-     */
-    static std::pair<cv::Matx33d, cv::Vec3d> transformFromCamParams(const camera::cameraParam &camParam);
 };
 
 #endif // SIMULATORFILTERS_SIMULATORIMAGENODE_HPP
