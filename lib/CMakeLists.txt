@@ -11,6 +11,7 @@ target_link_libraries(${PROJECT_NAME}
     opencv_imgproc
     opencv_imgcodecs
     SpatzLib
+    MsgInLib
 )
 
 default_install(${PROJECT_NAME})
