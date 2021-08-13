@@ -79,7 +79,7 @@ void SimulatorSpatzNode::timerCallback() {
     tfBroadcaster.sendTransform(tf_msg);
 
     // Publish laser sensor measurement separately. This is technically contained in spatz, but it looks fancy in rviz.
-    auto laser_msg = buildLaserMessage(stamp, static_cast<float>(spatz.getLaser()));
+    auto laser_msg = buildLaserMessage(stamp, static_cast<float>(spatz.getLaserFront()));
     laserPublisher->publish(laser_msg);
 
     // Publish rcmode if changed
@@ -156,7 +156,6 @@ sensor_msgs::msg::Range SimulatorSpatzNode::buildLaserMessage(const rclcpp::Time
 }
 
 env::Spatz SimulatorSpatzNode::spatzFromHWIn(const HardwareIn &inobj) {
-    env::SensorSide sensorSide{false, inobj.binaryLightSensorTriggered};
     env::Spatz spatz{inobj.time,
                      math::v3d{inobj.x, inobj.y, inobj.psi},
                      math::v2d{inobj.velX, inobj.velY},
@@ -164,7 +163,7 @@ env::Spatz SimulatorSpatzNode::spatzFromHWIn(const HardwareIn &inobj) {
                      inobj.dPsi,
                      inobj.steeringAngle,
                      inobj.laserSensorValue,
-                     sensorSide,
+                     inobj.binaryLightSensorTriggered,
                      inobj.drivenDistance};
 
     return spatz;

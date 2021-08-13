@@ -76,10 +76,10 @@ tResult SimulatorSpatzInput::ThreadFunc() {
         auto steerAngle = inobj->steeringAngle;
         auto laser = inobj->laserSensorValue;
 
-        auto sensorSide = env::SensorSide{false, inobj->binaryLightSensorTriggered};
+        auto lightSwitch = inobj->binaryLightSensorTriggered;
         auto integratedDistance = inobj->drivenDistance;
 
-        env::Spatz spatz{t, pose, vel, acc, dPsi, steerAngle, laser, sensorSide, integratedDistance};
+        env::Spatz spatz{t, pose, vel, acc, dPsi, steerAngle, laser, lightSwitch, integratedDistance};
 
         pinSpatzOut.sendData(_clock->GetStreamTime(), spatz);
         SpatzMultiplexer::submitSpatz(spatz);
