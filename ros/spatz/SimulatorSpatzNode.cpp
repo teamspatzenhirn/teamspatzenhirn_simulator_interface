@@ -6,7 +6,7 @@
 
 #include "SimulatorSpatzNode.hpp"
 
-#include <Util/ros/spatz_conversion.hpp>
+#include <Util/ros/Conversions/spatz.hpp>
 #include <gsl/gsl>
 #include <tf2/transform_datatypes.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
@@ -66,7 +66,7 @@ void SimulatorSpatzNode::timerCallback() {
     auto spatz = spatzFromHWIn(*inobj);
     RCLCPP_INFO(get_logger(), "publishing spatz at x=%f, y=%f, psi=%f", spatz.getPos().x, spatz.getPos().y,
                 spatz.getPsi());
-    spatzPublisher->publish(messageFromSpatz(spatz, stamp));
+    spatzPublisher->publish(conversions::messageFromSpatz(spatz, stamp));
 
     // Publish spatz marker for rviz
     // TODO (jonasotto, April 2021): Figure out how to send this only once, since it is frame-locked to spatz frame

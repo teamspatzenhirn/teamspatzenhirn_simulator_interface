@@ -13,9 +13,9 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
-#include "Util/ros/camParam_conversion.hpp"
-#include "Util/ros/opencv_typeconversion.hpp"
-#include "Util/ros/tf2_opencv_conversion.hpp"
+#include "Util/ros/Conversions/camParam.hpp"
+#include "Util/ros/Conversions/opencv_types.hpp"
+#include "Util/ros/Conversions/tf2_opencv.hpp"
 
 using namespace std::chrono_literals;
 
@@ -24,7 +24,7 @@ SimulatorImageNode::SimulatorImageNode() :
     rx(SimulatorSHM::CLIENT, SHM_IMAGE_ID),
     cameraFrameBroadcaster(this) {
 
-    std::tie(camera_info, to_img) = messageFromCamParams(getSimParams());
+    std::tie(camera_info, to_img) = conversions::messageFromCamParams(getSimParams());
 
     rx.attach();
 
@@ -45,7 +45,8 @@ SimulatorImageNode::SimulatorImageNode() :
     tf_msg.header.frame_id = "spatz";
     tf_msg.header.stamp = now();
     tf_msg.child_frame_id = "camera";
-    tf2::convert(tf2::Transform(tf2MatFromCV(rotMat), tf2VecFromCV(tvec)).inverse(), tf_msg.transform);
+    tf2::convert(tf2::Transform(conversions::tf2MatFromCV(rotMat), conversions::tf2VecFromCV(tvec)).inverse(),
+                 tf_msg.transform);
     cameraFrameBroadcaster.sendTransform(tf_msg);
 }
 
