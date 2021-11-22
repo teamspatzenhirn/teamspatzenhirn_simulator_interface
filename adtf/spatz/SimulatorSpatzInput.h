@@ -11,7 +11,7 @@
 #include "ADTF_Helper/adtf/Filter.h"
 #include "Controller/adtf/adtf_type.h"
 #include "Environment/adtf/adtf_type.h"
-#include "HardwareIO/adtf/adtf_type_RC.hpp"
+#include "HardwareIO_SpatzX/adtf/adtf_type_RC.hpp"
 #include "SimulatorFilters/lib/shm_ids.h"
 #include "SimulatorFilters/lib/shmcomm.h"
 #include "Spatz/adtf/adtf_type.h"
