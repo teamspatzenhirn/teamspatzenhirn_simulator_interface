@@ -15,6 +15,7 @@ target_link_libraries(SimulatorImageNode
         rosUtil
         opencvUtil)
 ament_target_dependencies(SimulatorImageNode rclcpp spatz_interfaces tf2_ros)
+set_property(TARGET SimulatorImageNode PROPERTY CXX_STANDARD ${NODE_CXX_STANDARD})
 
 install(TARGETS SimulatorImageNode
         DESTINATION lib/${PROJECT_NAME})

@@ -10,5 +10,6 @@ ament_target_dependencies(SimulatorVisualOutNode
         rclcpp
         spatz_interfaces
         )
+set_property(TARGET SimulatorVisualOutNode PROPERTY CXX_STANDARD ${NODE_CXX_STANDARD})
 
 default_install_binary(SimulatorVisualOutNode)

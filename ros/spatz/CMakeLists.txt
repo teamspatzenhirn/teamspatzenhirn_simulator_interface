@@ -20,5 +20,6 @@ ament_target_dependencies(SimulatorSpatzNode
         tf2_geometry_msgs
         visualization_msgs
         sensor_msgs)
+set_property(TARGET SimulatorSpatzNode PROPERTY CXX_STANDARD ${NODE_CXX_STANDARD})
 
 default_install_binary(SimulatorSpatzNode)
