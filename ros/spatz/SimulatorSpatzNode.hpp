@@ -41,7 +41,6 @@ class SimulatorSpatzNode : public rclcpp::Node {
   private:
     SimulatorSHM::SHMComm<HardwareIn> rx;
 
-    bool prevBinaryLightSensorTriggered = false;
     bool prevPaused = false;
 
     rclcpp::Publisher<spatz_interfaces::msg::Spatz>::SharedPtr spatzPublisher;
