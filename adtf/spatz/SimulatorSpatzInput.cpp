@@ -69,7 +69,7 @@ tResult SimulatorSpatzInput::ThreadFunc() {
 
         // Sending spatz:
         auto t = inobj->time;
-        auto pose = math::v3d{inobj->x, inobj->y, inobj->psi};
+        auto pose = math::Pose2d{inobj->x, inobj->y, inobj->psi};
         auto vel = math::v2d{inobj->velX, inobj->velY};
         auto acc = math::v3d{inobj->accX, inobj->accY, 0};
         auto dPsi = inobj->dPsi;

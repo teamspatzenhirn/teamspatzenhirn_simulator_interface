@@ -157,7 +157,7 @@ sensor_msgs::msg::Range SimulatorSpatzNode::buildLaserMessage(const rclcpp::Time
 
 env::Spatz SimulatorSpatzNode::spatzFromHWIn(const HardwareIn &inobj) {
     env::Spatz spatz{inobj.time,
-                     math::v3d{inobj.x, inobj.y, inobj.psi},
+                     math::Pose2d{inobj.x, inobj.y, inobj.psi},
                      math::v2d{inobj.velX, inobj.velY},
                      math::v3d{inobj.accX, inobj.accY, 0},
                      inobj.dPsi,
