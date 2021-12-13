@@ -46,7 +46,8 @@ struct HardwareIn {
     double psi;
     double dPsi;
 
-    double steeringAngle;
+    double steeringAngleFront;
+    double steeringAngleRear;
 
     double velX;
     double velY;

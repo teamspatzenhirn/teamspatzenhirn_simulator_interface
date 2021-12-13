@@ -73,13 +73,23 @@ tResult SimulatorSpatzInput::ThreadFunc() {
         auto vel = math::v2d{inobj->velX, inobj->velY};
         auto acc = math::v3d{inobj->accX, inobj->accY, 0};
         auto dPsi = inobj->dPsi;
-        auto steerAngle = inobj->steeringAngle;
+        auto steerAngleFront = inobj->steeringAngleFront;
+        auto steerAngleRear = inobj->steeringAngleRear;
         auto laser = inobj->laserSensorValue;
 
         auto lightSwitch = inobj->binaryLightSensorTriggered;
         auto integratedDistance = inobj->drivenDistance;
 
-        env::Spatz spatz{t, pose, vel, acc, dPsi, steerAngle, laser, lightSwitch, integratedDistance};
+        env::Spatz spatz{/*t = */ t,
+                         /*pose = */ pose,
+                         /*vel = */ vel,
+                         /*acc = */ acc,
+                         /*dPsi = */ dPsi,
+                         /*steerAngleFront = */ steerAngleFront,
+                         /*steerAngleRear = */ steerAngleRear,
+                         /*laserFront = */ laser,
+                         /*lightSwitchRear = */ lightSwitch,
+                         /*integratedDistance = */ integratedDistance};
 
         pinSpatzOut.sendData(_clock->GetStreamTime(), spatz);
         SpatzMultiplexer::submitSpatz(spatz);

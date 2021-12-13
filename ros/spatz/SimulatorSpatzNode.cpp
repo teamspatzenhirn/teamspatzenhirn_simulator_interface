@@ -76,15 +76,16 @@ void SimulatorSpatzNode::onSpatzLivelinessLost(const rclcpp::QOSLivelinessLostIn
 }
 
 env::Spatz SimulatorSpatzNode::spatzFromHWIn(const HardwareIn &inobj) {
-    env::Spatz spatz{inobj.time,
-                     math::Pose2d{inobj.x, inobj.y, inobj.psi},
-                     math::v2d{inobj.velX, inobj.velY},
-                     math::v3d{inobj.accX, inobj.accY, 0},
-                     inobj.dPsi,
-                     inobj.steeringAngle,
-                     inobj.laserSensorValue,
-                     inobj.binaryLightSensorTriggered,
-                     inobj.drivenDistance};
+    env::Spatz spatz{/*t = */ inobj.time,
+                     /*pose = */ math::Pose2d{inobj.x, inobj.y, inobj.psi},
+                     /*vel = */ math::v2d{inobj.velX, inobj.velY},
+                     /*acc = */ math::v3d{inobj.accX, inobj.accY, 0},
+                     /*dPsi = */ inobj.dPsi,
+                     /*steerAngleFront = */ inobj.steeringAngleFront,
+                     /*steerAngleRear = */ inobj.steeringAngleRear,
+                     /*laserFront = */ inobj.laserSensorValue,
+                     /*lightSwitchRear = */ inobj.binaryLightSensorTriggered,
+                     /*integratedDistance = */ inobj.drivenDistance};
 
     return spatz;
 }
