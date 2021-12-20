@@ -6,7 +6,7 @@
 
 #include "SimulatorVisualOutNode.hpp"
 
-#include <Trajectory/ros/InterpolatedTrajectory.hpp>
+#include <Trajectory/ros/TrajectoryNode/InterpolatedTrajectory.hpp>
 
 SimulatorVisualOutNode::SimulatorVisualOutNode(const std::string &name) :
     rclcpp::Node(name),
