@@ -1,12 +1,9 @@
 #include "SimulatorDepthFilter.h"
 
-#include <SimulatorFilters/lib/SpatzMultiplexer.h>
+#include "SimulatorFilters/lib/SimCameraCalib.hpp"
+#include "SimulatorFilters/lib/SpatzMultiplexer.h"
 
 ADTF_FILTER_PLUGIN("Simulator Depth Input", OID_ADTF_SIMU_CAPTURE_FILTER, SimulatorDepthFilter)
-
-constexpr auto CAMERA_TRANS_X = 0.05F;
-constexpr auto CAMERA_TRANS_Y = 0.0F;
-constexpr auto CAMERA_TRANS_Z = 0.19F;
 
 SimulatorDepthFilter::SimulatorDepthFilter(const tChar *__info) :
     Filter<cBaseIODeviceFilter>(__info),
@@ -109,8 +106,8 @@ auto SimulatorDepthFilter::ReadAndTransmitData() -> tResult {
 
     SpatzPointcloud spatzPointcloud;
     spatzPointcloud.spatz = spatz;
-    spatzPointcloud.width = DEPTH_WIDTH;
-    spatzPointcloud.height = DEPTH_HEIGHT;
+    spatzPointcloud.width = SIM_DEPTH_CAMERA_WIDTH;
+    spatzPointcloud.height = SIM_DEPTH_CAMERA_HEIGHT;
     spatzPointcloud.pointcloud.resize(spatzPointcloud.width * spatzPointcloud.height);
 
     SpatzPointcloud resizedSpatzPointcloud;
@@ -122,7 +119,8 @@ auto SimulatorDepthFilter::ReadAndTransmitData() -> tResult {
     for (std::size_t y = 0; y < spatzPointcloud.height; ++y) {
         for (std::size_t x = 0; x < spatzPointcloud.width; ++x) {
             const auto &d435Pt = cvDepthPoints[y * spatzPointcloud.width + x];
-            const cv::Point3f pt{d435Pt.z + CAMERA_TRANS_X, -d435Pt.x + CAMERA_TRANS_Y, -d435Pt.y + CAMERA_TRANS_Z};
+            const cv::Point3f pt{d435Pt.z + SIM_DEPTH_CAMERA_TRANS_X, -d435Pt.x + SIM_DEPTH_CAMERA_TRANS_Y,
+                                 -d435Pt.y + SIM_DEPTH_CAMERA_TRANS_Z};
 
             spatzPointcloud.pointcloud[y * spatzPointcloud.width + x] = pt;
             if (x % 2 == 0 and y % 2 == 0) {

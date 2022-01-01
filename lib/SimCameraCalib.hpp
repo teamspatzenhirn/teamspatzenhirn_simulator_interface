@@ -50,6 +50,13 @@ const inline cv::Matx33f SIM_NEW_CAMERA_MATRIX = SIM_CAMERA_MATRIX;
 const inline cv::Matx33f SIM_FLOORPLANE_TO_IMAGE_MATRIX{-18.0840047303783,    14.18272333593642, 1023.999424911321,
                                                         -9.416378271252997,   0,                 -3026.181619229515,
                                                         -0.01766016133751843, 0,                 1};
+// relevant for the simulation of the point cloud
+constexpr auto SIM_DEPTH_CAMERA_WIDTH = 640 * 2;
+constexpr auto SIM_DEPTH_CAMERA_HEIGHT = 480;
+
+constexpr auto SIM_DEPTH_CAMERA_TRANS_X = 0.05F;
+constexpr auto SIM_DEPTH_CAMERA_TRANS_Y = 0.0F;
+constexpr auto SIM_DEPTH_CAMERA_TRANS_Z = 0.19F;
 
 // clang-format on
 

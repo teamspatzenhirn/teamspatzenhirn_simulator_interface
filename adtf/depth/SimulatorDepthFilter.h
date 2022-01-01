@@ -23,10 +23,6 @@ class SimulatorDepthFilter : public adtf_helper::Filter<adtf::cBaseIODeviceFilte
     ADTF_FILTER(OID_ADTF_SIMU_CAPTURE_FILTER, "Simulator Depth Input", adtf::OBJCAT_SensorDevice)
 
   protected:
-    static constexpr auto DEPTH_WIDTH = 640 * 2;
-    static constexpr auto DEPTH_HEIGHT = 480;
-    static constexpr auto DEPTH_LEN = DEPTH_HEIGHT * DEPTH_WIDTH;
-
     Pin_ptr<adtf_types::SpatzPointcloudMsg> pointcloudOut = {this, "PointCloudOut", PinType::Output};
     Pin_ptr<adtf_types::SpatzPointcloudMsg> filteredPointcloudOut = {this, "FilteredPointCloudOut", PinType::Output};
 
@@ -34,7 +30,6 @@ class SimulatorDepthFilter : public adtf_helper::Filter<adtf::cBaseIODeviceFilte
     SimulatorSHM::SHMComm<HardwareIn> spatzRx;
 
     int failCounter;
-    bool prevBinaryLightSensorTriggered;
 
 
   public:
