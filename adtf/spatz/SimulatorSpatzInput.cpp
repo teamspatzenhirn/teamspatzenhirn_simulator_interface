@@ -1,6 +1,7 @@
 #include "SimulatorSpatzInput.h"
 
 #include <SimulatorFilters/lib/SpatzMultiplexer.h>
+#include <SpatzX/lib/SystemParams.hpp>
 
 ADTF_FILTER_PLUGIN("Simulator Spatz Input", OID_ADTF_SIMULATOR_SPATZ_INPUT, SimulatorSpatzInput)
 
@@ -89,7 +90,8 @@ tResult SimulatorSpatzInput::ThreadFunc() {
                          /*steerAngleRear = */ steerAngleRear,
                          /*laserFront = */ laser,
                          /*lightSwitchRear = */ lightSwitch,
-                         /*integratedDistance = */ integratedDistance};
+                         /*integratedDistance = */ integratedDistance,
+                         /*systemParams = */ spatzx::systemParams};
 
         pinSpatzOut.sendData(_clock->GetStreamTime(), spatz);
         SpatzMultiplexer::submitSpatz(spatz);

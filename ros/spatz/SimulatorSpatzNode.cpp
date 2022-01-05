@@ -6,6 +6,7 @@
 
 #include "SimulatorSpatzNode.hpp"
 
+#include <SpatzX/lib/SystemParams.hpp>
 #include <Util/ros/Conversions/spatz.hpp>
 #include <gsl/gsl>
 
@@ -85,7 +86,8 @@ env::Spatz SimulatorSpatzNode::spatzFromHWIn(const HardwareIn &inobj) {
                      /*steerAngleRear = */ inobj.steeringAngleRear,
                      /*laserFront = */ inobj.laserSensorValue,
                      /*lightSwitchRear = */ inobj.binaryLightSensorTriggered,
-                     /*integratedDistance = */ inobj.drivenDistance};
+                     /*integratedDistance = */ inobj.drivenDistance,
+                     /*systemParams = */ spatzx::systemParams};
 
     return spatz;
 }

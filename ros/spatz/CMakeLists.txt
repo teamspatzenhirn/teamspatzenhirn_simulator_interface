@@ -11,7 +11,7 @@ find_package(visualization_msgs REQUIRED)
 
 
 add_executable(SimulatorSpatzNode SimulatorSpatzNode.cpp main.cpp)
-target_link_libraries(SimulatorSpatzNode SharedMemLib rosUtil)
+target_link_libraries(SimulatorSpatzNode SharedMemLib rosUtil SpatzXLib)
 ament_target_dependencies(SimulatorSpatzNode
         rclcpp
         spatz_interfaces
