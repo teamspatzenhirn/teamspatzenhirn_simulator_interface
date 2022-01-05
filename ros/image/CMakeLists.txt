@@ -5,8 +5,10 @@ find_package(rclcpp REQUIRED)
 find_package(spatz_interfaces REQUIRED)
 find_package(tf2_ros REQUIRED)
 
-add_executable(SimulatorImageNode SimulatorImageNode.cpp main.cpp)
-target_link_libraries(SimulatorImageNode
+project(SimulatorImageNode)
+
+add_executable(${PROJECT_NAME} SimulatorImageNode.cpp main.cpp)
+target_link_libraries(${PROJECT_NAME}
         opencv_core
         opencv_imgproc
         opencv_calib3d
@@ -14,8 +16,7 @@ target_link_libraries(SimulatorImageNode
         SharedMemLib
         rosUtil
         opencvUtil)
-ament_target_dependencies(SimulatorImageNode rclcpp spatz_interfaces tf2_ros)
-set_property(TARGET SimulatorImageNode PROPERTY CXX_STANDARD ${NODE_CXX_STANDARD})
+ament_target_dependencies(${PROJECT_NAME} rclcpp spatz_interfaces tf2_ros)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD ${NODE_CXX_STANDARD})
 
-install(TARGETS SimulatorImageNode
-        DESTINATION lib/${PROJECT_NAME})
+default_install_binary(${PROJECT_NAME})

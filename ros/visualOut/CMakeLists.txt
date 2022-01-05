@@ -4,12 +4,14 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(spatz_interfaces REQUIRED)
 
-add_executable(SimulatorVisualOutNode SimulatorVisualOutNode.cpp main.cpp)
-target_link_libraries(SimulatorVisualOutNode SharedMemLib InterpolatedTrajectory)
-ament_target_dependencies(SimulatorVisualOutNode
+project(SimulatorVisualOutNode)
+
+add_executable(${PROJECT_NAME} SimulatorVisualOutNode.cpp main.cpp)
+target_link_libraries(${PROJECT_NAME} SharedMemLib InterpolatedTrajectory)
+ament_target_dependencies(${PROJECT_NAME}
         rclcpp
         spatz_interfaces
         )
-set_property(TARGET SimulatorVisualOutNode PROPERTY CXX_STANDARD ${NODE_CXX_STANDARD})
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD ${NODE_CXX_STANDARD})
 
-default_install_binary(SimulatorVisualOutNode)
+default_install_binary(${PROJECT_NAME})
