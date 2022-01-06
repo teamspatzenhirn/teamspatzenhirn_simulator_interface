@@ -26,6 +26,14 @@ SimulatorDepthNode::SimulatorDepthNode() :
 }
 
 void SimulatorDepthNode::timer_callback() {
+    bool generateRaw = (pointCloudPublisher->get_subscription_count() > 0);
+    bool generateFiltered = (filteredPointCloudPublisher->get_subscription_count() > 0);
+
+    // performing the conversion is only worth if there are subscribers
+    if (!generateRaw and !generateFiltered) {
+        return;
+    }
+
     DepthObject *depthImage = rx.lock(SimulatorSHM::READ_OLDEST);
 
     if (depthImage == nullptr) {
@@ -46,42 +54,61 @@ void SimulatorDepthNode::timer_callback() {
     const auto frame = "spatz";
     const auto stamp = now();
 
-    // set message header fields
-    pointCloudMessage->header.frame_id = frame;
-    pointCloudMessage->header.stamp = stamp;
+    std::optional<sensor_msgs::PointCloud2Iterator<float>> iterX;
+    std::optional<sensor_msgs::PointCloud2Iterator<float>> iterY;
+    std::optional<sensor_msgs::PointCloud2Iterator<float>> iterZ;
+    std::optional<sensor_msgs::PointCloud2Iterator<float>> filteredIterX;
+    std::optional<sensor_msgs::PointCloud2Iterator<float>> filteredIterY;
+    std::optional<sensor_msgs::PointCloud2Iterator<float>> filteredIterZ;
 
-    filteredPointCloudMessage->header.frame_id = frame;
-    filteredPointCloudMessage->header.stamp = stamp;
+    if (generateRaw) {
+        // set message header fields
+        pointCloudMessage->header.frame_id = frame;
+        pointCloudMessage->header.stamp = stamp;
 
-    // set basic fields
-    pointCloudMessage->height = SIM_DEPTH_CAMERA_HEIGHT;
-    pointCloudMessage->width = SIM_DEPTH_CAMERA_WIDTH;
-    filteredPointCloudMessage->height = SIM_DEPTH_CAMERA_HEIGHT / 2;
-    filteredPointCloudMessage->width = SIM_DEPTH_CAMERA_WIDTH / 2;
+        // set basic fields
+        pointCloudMessage->height = SIM_DEPTH_CAMERA_HEIGHT;
+        pointCloudMessage->width = SIM_DEPTH_CAMERA_WIDTH;
 
-    // allows iterating over the point cloud message
-    sensor_msgs::PointCloud2Modifier modifier(*pointCloudMessage);
-    sensor_msgs::PointCloud2Modifier filteredModifier(*filteredPointCloudMessage);
+        sensor_msgs::PointCloud2Modifier modifier(*pointCloudMessage);
 
-    modifier.setPointCloud2Fields(3, "x", 1, sensor_msgs::msg::PointField::FLOAT32, "y", 1,
-                                  sensor_msgs::msg::PointField::FLOAT32, "z", 1, sensor_msgs::msg::PointField::FLOAT32);
-    filteredModifier.setPointCloud2Fields(3, "x", 1, sensor_msgs::msg::PointField::FLOAT32, "y", 1,
-                                          sensor_msgs::msg::PointField::FLOAT32, "z", 1,
-                                          sensor_msgs::msg::PointField::FLOAT32);
+        // implicitly resizes the data field of the message
+        modifier.setPointCloud2Fields(3, "x", 1, sensor_msgs::msg::PointField::FLOAT32, "y", 1,
+                                      sensor_msgs::msg::PointField::FLOAT32, "z", 1,
+                                      sensor_msgs::msg::PointField::FLOAT32);
 
-    sensor_msgs::PointCloud2Iterator<float> iterX(*pointCloudMessage, "x");
-    sensor_msgs::PointCloud2Iterator<float> iterY(*pointCloudMessage, "y");
-    sensor_msgs::PointCloud2Iterator<float> iterZ(*pointCloudMessage, "z");
-    sensor_msgs::PointCloud2Iterator<float> filteredIterX(*filteredPointCloudMessage, "x");
-    sensor_msgs::PointCloud2Iterator<float> filteredIterY(*filteredPointCloudMessage, "y");
-    sensor_msgs::PointCloud2Iterator<float> filteredIterZ(*filteredPointCloudMessage, "z");
+        iterX = sensor_msgs::PointCloud2Iterator<float>(*pointCloudMessage, "x");
+        iterY = sensor_msgs::PointCloud2Iterator<float>(*pointCloudMessage, "y");
+        iterZ = sensor_msgs::PointCloud2Iterator<float>(*pointCloudMessage, "z");
+    }
+
+    if (generateFiltered) {
+        // set message header fields
+        filteredPointCloudMessage->header.frame_id = frame;
+        filteredPointCloudMessage->header.stamp = stamp;
+
+        // set basic fields
+        filteredPointCloudMessage->height = SIM_DEPTH_CAMERA_HEIGHT / 2;
+        filteredPointCloudMessage->width = SIM_DEPTH_CAMERA_WIDTH / 2;
+
+        sensor_msgs::PointCloud2Modifier filteredModifier(*filteredPointCloudMessage);
+
+        // implicitly resizes the data field of the message
+        filteredModifier.setPointCloud2Fields(3, "x", 1, sensor_msgs::msg::PointField::FLOAT32, "y", 1,
+                                              sensor_msgs::msg::PointField::FLOAT32, "z", 1,
+                                              sensor_msgs::msg::PointField::FLOAT32);
+
+        filteredIterX = sensor_msgs::PointCloud2Iterator<float>(*filteredPointCloudMessage, "x");
+        filteredIterY = sensor_msgs::PointCloud2Iterator<float>(*filteredPointCloudMessage, "y");
+        filteredIterZ = sensor_msgs::PointCloud2Iterator<float>(*filteredPointCloudMessage, "z");
+    }
 
     // extract the point cloud
     const auto *const cvDepthPoints = reinterpret_cast<cv::Point3f *>(depthImage->depthPoints);
 
-    for (std::size_t y = 0; y < pointCloudMessage->height; ++y) {
-        for (std::size_t x = 0; x < pointCloudMessage->width; ++x) {
-            const auto &d435Pt = cvDepthPoints[y * pointCloudMessage->width + x];
+    for (std::size_t y = 0; y < SIM_DEPTH_CAMERA_HEIGHT; ++y) {
+        for (std::size_t x = 0; x < SIM_DEPTH_CAMERA_WIDTH; ++x) {
+            const auto &d435Pt = cvDepthPoints[y * SIM_DEPTH_CAMERA_WIDTH + x];
             /*
              * Transformation between the coordinate system of the simulated depth camera (image coordinates: x to
              * the right, y downwards and z for the depth) to the vehicle coordinate system
@@ -89,29 +116,31 @@ void SimulatorDepthNode::timer_callback() {
             const cv::Point3f pt{d435Pt.z + SIM_DEPTH_CAMERA_TRANS_X, -d435Pt.x + SIM_DEPTH_CAMERA_TRANS_Y,
                                  -d435Pt.y + SIM_DEPTH_CAMERA_TRANS_Z};
 
-            *iterX = pt.x;
-            *iterY = pt.y;
-            *iterZ = pt.z;
+            if (generateRaw) {
+                *(iterX.value()) = pt.x;
+                *(iterY.value()) = pt.y;
+                *(iterZ.value()) = pt.z;
 
-            if (x % 2 == 0 and y % 2 == 0) {
-                *filteredIterX = pt.x;
-                *filteredIterY = pt.y;
-                *filteredIterZ = pt.z;
-
-                ++filteredIterX;
-                ++filteredIterY;
-                ++filteredIterZ;
+                ++(iterX.value());
+                ++(iterY.value());
+                ++(iterZ.value());
             }
 
-            ++iterX;
-            ++iterY;
-            ++iterZ;
+            if (generateFiltered and x % 2 == 0 and y % 2 == 0) {
+                *(filteredIterX.value()) = pt.x;
+                *(filteredIterY.value()) = pt.y;
+                *(filteredIterZ.value()) = pt.z;
+
+                ++(filteredIterX.value());
+                ++(filteredIterY.value());
+                ++(filteredIterZ.value());
+            }
         }
     }
 
     rx.unlock(depthImage);
 
-    RCLCPP_INFO(get_logger(), "Publishing fused pointclouds (filtered and normal)");
+    RCLCPP_DEBUG(get_logger(), "Publishing fused pointclouds (filtered and normal)");
 
     publishIfNeeded(pointCloudPublisher, std::move(pointCloudMessage));
     publishIfNeeded(filteredPointCloudPublisher, std::move(filteredPointCloudMessage));
