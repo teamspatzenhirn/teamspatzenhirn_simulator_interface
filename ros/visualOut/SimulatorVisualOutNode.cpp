@@ -28,6 +28,7 @@ void SimulatorVisualOutNode::onTrajectoryIn(spatz_interfaces::msg::Trajectory::C
     if (nullptr == visOut) {
         RCLCPP_ERROR(get_logger(), "Cannot send visualization output: Fifo full!");
     } else {
+        assert(trajectoryMessage->states.size() > 1);
         InterpolatedTrajectory trajectory(*trajectoryMessage);
         int N = sizeof(visOut->trajectoryPoints) / sizeof(visOut->trajectoryPoints[0]);
         double stepSize = (trajectory.endTime() - trajectory.startTime()) / N;
