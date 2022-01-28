@@ -17,9 +17,9 @@ SimulatorDepthNode::SimulatorDepthNode() :
     Node("simulator_depth_input"),
     timer(create_wall_timer(0s, [this] { timer_callback(); })),
     pointCloudPublisher(create_publisher<sensor_msgs::msg::PointCloud2>(
-            "depth/fused_pointcloud", rclcpp::QoS(0).best_effort().durability_volatile())),
+            "depth/combinedPointcloud", rclcpp::QoS(0).best_effort().durability_volatile())),
     filteredPointCloudPublisher(create_publisher<sensor_msgs::msg::PointCloud2>(
-            "depth/filtered_fused_pointcloud", rclcpp::QoS(0).best_effort().durability_volatile())),
+            "depth/combinedFilteredPointcloud", rclcpp::QoS(0).best_effort().durability_volatile())),
     rx(SimulatorSHM::CLIENT, SHM_DEPTH_ID) {
 
     rx.attach();
