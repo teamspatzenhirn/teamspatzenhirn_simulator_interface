@@ -6,6 +6,6 @@ if (ROS)
     find_package(tf2_ros REQUIRED)
 
     add_executable(simulatorExtrinsic simulatorExtrinsic.main.cpp)
-    target_link_libraries(simulatorExtrinsic ${OpenCV_LIBS})
+    target_link_libraries(simulatorExtrinsic ${OpenCV_LIBS} SimCameraCalib)
     ament_target_dependencies(simulatorExtrinsic tf2)
 endif ()

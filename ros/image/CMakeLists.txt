@@ -15,7 +15,8 @@ target_link_libraries(${PROJECT_NAME}
         LoggingLib
         SharedMemLib
         rosUtil
-        opencvUtil)
+        opencvUtil
+        SimCameraCalib)
 ament_target_dependencies(${PROJECT_NAME} rclcpp spatz_interfaces tf2_ros)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD ${NODE_CXX_STANDARD})
 
