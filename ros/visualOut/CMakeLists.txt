@@ -6,12 +6,9 @@ find_package(spatz_interfaces REQUIRED)
 
 project(SimulatorVisualOutNode)
 
-add_executable(${PROJECT_NAME} SimulatorVisualOutNode.cpp main.cpp)
+add_carolo_rosnode(${PROJECT_NAME} SimulatorVisualOutNode.cpp main.cpp)
 target_link_libraries(${PROJECT_NAME} SharedMemLib InterpolatedTrajectory)
 ament_target_dependencies(${PROJECT_NAME}
         rclcpp
         spatz_interfaces
         )
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD ${NODE_CXX_STANDARD})
-
-default_install_binary(${PROJECT_NAME})
