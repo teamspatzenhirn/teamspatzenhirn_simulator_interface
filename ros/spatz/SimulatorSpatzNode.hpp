@@ -11,6 +11,7 @@
 #include <SimulatorFilters/lib/shmcomm.h>
 #include <Spatz/lib/Spatz.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <rosgraph_msgs/msg/clock.hpp>
 #include <spatz_interfaces/msg/rc_mode.hpp>
 #include <spatz_interfaces/msg/spatz.hpp>
 
@@ -37,6 +38,7 @@ class SimulatorSpatzNode : public rclcpp::Node {
 
     rclcpp::Publisher<spatz_interfaces::msg::Spatz>::SharedPtr spatzPublisher;
     rclcpp::Publisher<spatz_interfaces::msg::RCMode>::SharedPtr rcModePublisher;
+    rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr clockPublisher;
 
     rclcpp::TimerBase::SharedPtr timer;
     void timerCallback();

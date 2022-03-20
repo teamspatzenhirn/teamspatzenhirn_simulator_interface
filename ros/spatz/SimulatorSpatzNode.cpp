@@ -27,6 +27,8 @@ SimulatorSpatzNode::SimulatorSpatzNode() : Node("simulator_input"), rx(Simulator
     // Use TRANSIENT_LOCAL Durability to provide late joining nodes with current state
     rcModePublisher = create_publisher<msg::RCMode>("rcmode", QoS(1).reliable().transient_local());
 
+    clockPublisher = create_publisher<rosgraph_msgs::msg::Clock>("/clock", QoS(1).reliable().transient_local());
+
     // Timer for polling shared memory transport to simulator
     using namespace std::chrono_literals;
     timer = this->create_wall_timer(1ms, std::bind(&SimulatorSpatzNode::timerCallback, this));
@@ -47,13 +49,16 @@ void SimulatorSpatzNode::timerCallback() {
 
     RCLCPP_INFO(get_logger(), "Received Spatz from simulator");
 
-    builtin_interfaces::msg::Time stamp = now();
-
     // Build and publish spatz
     auto spatz = spatzFromHWIn(*inobj);
+    rclcpp::Time spatzTime =
+            rclcpp::Time(gsl::narrow_cast<int64_t>(spatz.getTSeconds() * std::nano::den), RCL_ROS_TIME);
+    RCLCPP_INFO(get_logger(), "publishing ros time %fs", spatzTime.seconds());
+    clockPublisher->publish(rosgraph_msgs::build<rosgraph_msgs::msg::Clock>().clock(spatzTime));
+
     RCLCPP_INFO(get_logger(), "publishing spatz at x=%f, y=%f, psi=%f", spatz.getPos().x, spatz.getPos().y,
                 spatz.getPsi());
-    spatzPublisher->publish(conversions::messageFromSpatz(spatz, stamp));
+    spatzPublisher->publish(conversions::messageFromSpatz(spatz, spatzTime));
 
     // Publish rcmode if changed
     if (prevPaused != inobj->paused) {

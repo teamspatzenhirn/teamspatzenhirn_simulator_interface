@@ -8,6 +8,7 @@ find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
+find_package(rosgraph_msgs REQUIRED) # Time data type for /clock
 
 project(SimulatorSpatzNode)
 
