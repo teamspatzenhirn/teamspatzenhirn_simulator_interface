@@ -3,7 +3,7 @@ project(SimulatorDepthFilter)
 
 file(GLOB SOURCES
     *.cpp
-)
+    )
 
 adtf_add_filter(${PROJECT_NAME} ${SOURCES})
 target_link_libraries(${PROJECT_NAME}
@@ -12,4 +12,5 @@ target_link_libraries(${PROJECT_NAME}
     LoggingLib
     SharedMemLib
     SimCameraCalib
-)
+    ImageProcessingLib
+    )
