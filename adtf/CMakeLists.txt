@@ -1,5 +1,0 @@
-add_subdirectory(image)
-add_subdirectory(depth)
-add_subdirectory(spatz)
-add_subdirectory(hardware)
-add_subdirectory(visual)
