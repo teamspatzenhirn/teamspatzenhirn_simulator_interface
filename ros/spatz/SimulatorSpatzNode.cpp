@@ -53,6 +53,13 @@ void SimulatorSpatzNode::timerCallback() {
     auto spatz = spatzFromHWIn(*inobj);
     rclcpp::Time spatzTime =
             rclcpp::Time(gsl::narrow_cast<int64_t>(spatz.getTSeconds() * std::nano::den), RCL_ROS_TIME);
+
+    if (spatzTime == lastSpatzTime) {
+        rx.unlock(inobj);
+        return;
+    }
+    lastSpatzTime = spatzTime;
+
     RCLCPP_INFO(get_logger(), "publishing ros time %fs", spatzTime.seconds());
     clockPublisher->publish(rosgraph_msgs::build<rosgraph_msgs::msg::Clock>().clock(spatzTime));
 

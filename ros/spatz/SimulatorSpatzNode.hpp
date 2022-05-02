@@ -34,6 +34,8 @@ class SimulatorSpatzNode : public rclcpp::Node {
   private:
     SimulatorSHM::SHMComm<HardwareIn> rx;
 
+    rclcpp::Time lastSpatzTime = rclcpp::Time(static_cast<int64_t>(0), rcl_clock_type_t::RCL_ROS_TIME);
+
     bool prevPaused = false;
 
     rclcpp::Publisher<spatz_interfaces::msg::Spatz>::SharedPtr spatzPublisher;
