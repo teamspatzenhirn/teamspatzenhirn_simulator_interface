@@ -23,12 +23,12 @@ double degToRad(double deg) {
 int main() {
 
     tf2::Transform t;
-    t.setOrigin({-0.00881438f, 0.280329f, 0.173094f}); // Camera position as set in simulator
+    t.setOrigin({0.0f, 0.3f, 0.15f}); // Camera position as set in simulator
     tf2::Quaternion q;
-    q.setRPY(-M_PI / 2 - degToRad(15.1559796f), 0, -M_PI / 2); // Camera rotation as set in simulator
+    q.setRPY(-M_PI / 2 - degToRad(10), 0, -M_PI / 2); // Camera rotation as set in simulator
     t.setRotation(q);
 
-    cv::Matx33f camMat = {917.39288, -5.2901368, 999.8327, 0, 941.92181, 799.56909, 0, 0, 1};
+    cv::Matx33f camMat = SIM_NEW_CAMERA_MATRIX;
 
     // Default calib points from CalibTool
     std::vector<cv::Point2f> objPts;

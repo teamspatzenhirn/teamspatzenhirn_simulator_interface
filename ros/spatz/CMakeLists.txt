@@ -13,7 +13,7 @@ find_package(rosgraph_msgs REQUIRED) # Time data type for /clock
 project(SimulatorSpatzNode)
 
 add_carolo_rosnode(${PROJECT_NAME} SimulatorSpatzNode.cpp main.cpp)
-target_link_libraries(${PROJECT_NAME} SharedMemLib rosUtil SpatzXLib)
+target_link_libraries(${PROJECT_NAME} SharedMemLib rosUtil SpatzLib SpatzToolboxLib)
 ament_target_dependencies(${PROJECT_NAME}
         rclcpp
         spatz_interfaces

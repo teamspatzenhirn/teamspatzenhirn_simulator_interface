@@ -14,14 +14,6 @@
 
 extern const cv::Size SIM_CAMERA_SIZE;
 
-extern const float SIM_ASPECT_RATIO;
-
-extern const float SIM_FOV_Y;
-extern const float SIM_FOV_X;
-
-extern const float SIM_FY;
-extern const float SIM_FX;
-
 extern const cv::Matx33f SIM_CAMERA_MATRIX;
 
 extern const cv::Matx<float, 1, 3> SIM_RADIAL_DISTORTION_COEFFICIENTS;
