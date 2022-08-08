@@ -65,7 +65,7 @@ void SimulatorSpatzNode::timerCallback() {
 
     RCLCPP_INFO(get_logger(), "publishing spatz at x=%f, y=%f, psi=%f", spatz.getPos().x, spatz.getPos().y,
                 spatz.getPsi());
-    spatzPublisher->publish(conversions::messageFromSpatz(spatz, spatzTime));
+    spatzPublisher->publish(conversions::messageFromSpatz(spatz));
 
     // Publish rcmode if changed
     if (prevPaused != inobj->paused) {
