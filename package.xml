@@ -4,7 +4,7 @@
     <name>teamspatzenhirn_simulator_interface</name>
     <version>0.0.0</version>
     <description>ROS2 Interface for the Carolo-Cup Simulator of Team Spatzenhirn</description>
-    <maintainer email="team-spatzenhirn@uni-ulm.de">jonas</maintainer>
+    <maintainer email="team-spatzenhirn@uni-ulm.de">Team Spatzenhirn</maintainer>
     <license>TODO: License declaration</license>
 
     <buildtool_depend>ament_cmake</buildtool_depend>
