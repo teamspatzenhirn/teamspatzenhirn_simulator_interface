@@ -6,7 +6,7 @@
 
 #include "SimulatorVisualOutNode.hpp"
 
-#include <Trajectory/ros/TrajectoryNode/InterpolatedTrajectory.hpp>
+//#include <Trajectory/ros/TrajectoryNode/InterpolatedTrajectory.hpp>
 
 SimulatorVisualOutNode::SimulatorVisualOutNode(const std::string &name) :
     rclcpp::Node(name),
@@ -29,6 +29,10 @@ void SimulatorVisualOutNode::onTrajectoryIn(spatz_interfaces::msg::Trajectory::C
         RCLCPP_ERROR(get_logger(), "Cannot send visualization output: Fifo full!");
     } else {
         assert(trajectoryMessage->states.size() > 1);
+        // TODO: Implement this. This hasn't been done so far because it uses the InterpolatedTrajectory class which
+        //  i don't want to move to this package from the (closed-source) Team-Spatzenhirn monorepo.
+        //  It doesn't do anything more fancy than linearly interpolating all trajectory values.
+        /*
         InterpolatedTrajectory trajectory(*trajectoryMessage);
         int N = sizeof(visOut->trajectoryPoints) / sizeof(visOut->trajectoryPoints[0]);
         double stepSize = (trajectory.endTime() - trajectory.startTime()) / N;
@@ -39,6 +43,9 @@ void SimulatorVisualOutNode::onTrajectoryIn(spatz_interfaces::msg::Trajectory::C
         }
 
         RCLCPP_INFO(get_logger(), "Sending trajectory visualization to simulator");
+         */
+        RCLCPP_WARN(get_logger(),
+                    "The conversion from ROS message for trajectory visualization is not yet implemented");
         tx.unlock(visOut);
     }
 }

@@ -12,8 +12,8 @@ find_package(rosgraph_msgs REQUIRED) # Time data type for /clock
 
 project(SimulatorSpatzNode)
 
-add_carolo_rosnode(${PROJECT_NAME} SimulatorSpatzNode.cpp main.cpp)
-target_link_libraries(${PROJECT_NAME} SharedMemLib rosUtil SpatzLib SpatzToolboxLib)
+add_executable(${PROJECT_NAME} SimulatorSpatzNode.cpp main.cpp)
+target_link_libraries(${PROJECT_NAME} SharedMemLib)
 ament_target_dependencies(${PROJECT_NAME}
         rclcpp
         spatz_interfaces
@@ -21,4 +21,5 @@ ament_target_dependencies(${PROJECT_NAME}
         tf2_ros
         tf2_geometry_msgs
         visualization_msgs
-        sensor_msgs)
+        sensor_msgs
+        rosgraph_msgs)

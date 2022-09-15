@@ -7,9 +7,8 @@
 #ifndef SIMULATORFILTERS_SIMULATORSPATZNODE_HPP
 #define SIMULATORFILTERS_SIMULATORSPATZNODE_HPP
 
-#include <SimulatorFilters/lib/shm_ids.h>
-#include <SimulatorFilters/lib/shmcomm.h>
-#include <Spatz/lib/Spatz.hpp>
+#include <lib/shm_ids.h>
+#include <lib/shmcomm.h>
 #include <rclcpp/rclcpp.hpp>
 #include <rosgraph_msgs/msg/clock.hpp>
 #include <spatz_interfaces/msg/rc_mode.hpp>
@@ -47,7 +46,7 @@ class SimulatorSpatzNode : public rclcpp::Node {
 
     void onSpatzLivelinessLost(const rclcpp::QOSLivelinessLostInfo &info) const;
 
-    static env::Spatz spatzFromHWIn(const HardwareIn &hwIn);
+    static spatz_interfaces::msg::Spatz spatzFromHWIn(const HardwareIn &hwIn);
 };
 
 #endif // SIMULATORFILTERS_SIMULATORSPATZNODE_HPP

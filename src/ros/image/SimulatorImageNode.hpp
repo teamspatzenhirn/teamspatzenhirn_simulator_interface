@@ -13,9 +13,8 @@
 #include <spatz_interfaces/msg/extrinsic_calib.hpp>
 #include <tf2_ros/static_transform_broadcaster.h>
 
-#include "ImageProcessing/lib/cameraParams.h"
-#include "SimulatorFilters/lib/shm_ids.h"
-#include "SimulatorFilters/lib/shmcomm.h"
+#include "lib/shm_ids.h"
+#include "lib/shmcomm.h"
 
 /**
  * @brief Node receiving camera image from simulator
@@ -52,8 +51,25 @@ class SimulatorImageNode : public rclcpp::Node {
     std::array<float, 3 * 3> to_img;
 
     tf2_ros::StaticTransformBroadcaster cameraFrameBroadcaster;
+};
 
-    static camera::cameraParam getSimParams();
+struct cameraParam {
+    cv::Size size = {0, 0}; ///< Size of the camera image.
+    cv::Matx33f camMat;
+    cv::Matx<float, 1, 2> distTanMat; ///< Tangential distortion matrix.
+    cv::Matx<float, 1, 3> distRadMat; ///< Radial distortion matrix.
+
+    cv::Matx33f roiMat; ///< Virtual camera matrix after undistortion.
+
+    cv::Matx33f toImg; ///< Matrix for conversion from car to img.
+    cv::Matx33f toCar; ///< Matrix for conversion from img to car.
+
+    /**
+     * Point conversion from car to image coordinate system.
+     * @param carCord Point in the car coordinate system.
+     * @return Corresponding point in the image coordinate system.
+     */
+    [[nodiscard]] cv::Point2f transToImg(const cv::Point2f &carCord) const;
 };
 
 #endif // SIMULATORFILTERS_SIMULATORIMAGENODE_HPP
