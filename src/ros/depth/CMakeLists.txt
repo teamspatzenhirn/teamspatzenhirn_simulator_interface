@@ -7,6 +7,7 @@ find_package(sensor_msgs REQUIRED)
 project(SimulatorDepthNode)
 
 add_executable(${PROJECT_NAME} SimulatorDepthNode.cpp main.cpp)
+default_install_binary(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME}
         opencv_core
         SharedMemLib

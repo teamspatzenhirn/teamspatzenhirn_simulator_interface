@@ -19,5 +19,6 @@ ament_target_dependencies(${PROJECT_NAME} rclcpp spatz_interfaces tf2_ros sensor
 
 project(SimulatorImageNode)
 add_executable(${PROJECT_NAME} main.cpp)
+default_install_binary(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} SimulatorImageNodeLib)
 ament_target_dependencies(${PROJECT_NAME} rclcpp)

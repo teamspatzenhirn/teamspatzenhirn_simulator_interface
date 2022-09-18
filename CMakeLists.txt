@@ -25,6 +25,17 @@ function(default_install target)
   )
 endfunction()
 
+# Project-local executable target (execute with ros2 run teamspatzenhirn_simulator_interface <target>)
+function(default_install_binary target)
+  if (NOT TARGET ${target})
+    message(SEND_ERROR "default_install_binary expected a target name, but got \"${target}\"")
+  endif ()
+  install(
+          TARGETS ${target}
+          DESTINATION lib/teamspatzenhirn_simulator_interface
+  )
+endfunction()
+
 add_subdirectory(src/lib)
 add_subdirectory(src/ros)
 add_subdirectory(src/test/standalone)

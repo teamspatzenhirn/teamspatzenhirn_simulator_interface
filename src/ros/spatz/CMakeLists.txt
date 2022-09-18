@@ -13,6 +13,7 @@ find_package(rosgraph_msgs REQUIRED) # Time data type for /clock
 project(SimulatorSpatzNode)
 
 add_executable(${PROJECT_NAME} SimulatorSpatzNode.cpp main.cpp)
+default_install_binary(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} SharedMemLib)
 ament_target_dependencies(${PROJECT_NAME}
         rclcpp
