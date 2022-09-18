@@ -1,0 +1,23 @@
+name: ci
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ros:humble
+    steps:
+      - name: Checkout teamspatzenhirn_simulator_interface
+        uses: actions/checkout@v3
+        with:
+          path: src/teamspatzenhirn_simulator_interface
+      - name: Checkout dependency spatz_interfaces
+        uses: actions/checkout@v3
+        with:
+          repository: teamspatzenhirn/spatz_interfaces
+          path: src/spatz_interfaces
+      - name: Install dependencies via APT
+        run: sudo apt update && sudo apt install -y libopencv-dev
+      - name: Build teamspatzenhirn_simulator_interface
+        run: |
+          . /opt/ros/humble/setup.sh
+          colcon build --packages-up-to teamspatzenhirn_simulator_interface
