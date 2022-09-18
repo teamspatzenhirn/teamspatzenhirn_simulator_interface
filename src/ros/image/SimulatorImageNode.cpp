@@ -6,25 +6,66 @@
 
 #include "SimulatorImageNode.hpp"
 
-#include <SimulatorFilters/lib/SimCameraCalib.hpp>
-#include <Util/lib/opencv/opencv.hpp>
+#include <lib/SimCameraCalib.hpp>
 #include <chrono>
 #include <sensor_msgs/fill_image.hpp>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
-
-#include "Util/ros/Conversions/camParam.hpp"
-#include "Util/ros/Conversions/opencv_types.hpp"
-#include "Util/ros/Conversions/tf2_opencv.hpp"
+#include <opencv2/calib3d.hpp>
 
 using namespace std::chrono_literals;
 
-SimulatorImageNode::SimulatorImageNode() :
-    Node("simulator_input"),
-    rx(SimulatorSHM::CLIENT, SHM_IMAGE_ID),
-    cameraFrameBroadcaster(this) {
+static cameraParam getSimParams();
 
-    std::tie(camera_info, to_img) = conversions::messageFromCamParams(getSimParams());
+std::pair<cv::Matx33d, cv::Vec3d> transformFromCamParams(const cameraParam &camParam) {
+    // Default calib points from CalibTool (need z=0 to apply perspective transform)
+    std::vector<cv::Point3d> spatzCoordinatePoints = {{0.5, -0.5, 0},
+                                                      {0.5, 0.5,  0},
+                                                      {1.2, 0.5,  0},
+                                                      {1.2, -0.5, 0}};
+
+    // Transform points to image coordinates
+    std::vector<cv::Point2d> imageCoordinates;
+    for (const auto &sp: spatzCoordinatePoints) {
+        assert(sp.z == 0);
+        auto imgCord = camParam.transToImg(cv::Point2f(sp.x, sp.y) * 1000);
+        imageCoordinates.emplace_back(imgCord);
+    }
+
+    auto roiMat = camParam.roiMat;
+    cv::Vec<double, 3> rotationVector;
+    cv::Vec<double, 3> translation;
+    cv::Matx<float, 1, 5> coeffs(camParam.distRadMat(0, 0), camParam.distRadMat(0, 1), camParam.distTanMat(0, 0),
+                                 camParam.distTanMat(0, 1), camParam.distRadMat(0, 2));
+
+    // Solve for rotation rotationVector and translation translation
+    cv::solvePnP(spatzCoordinatePoints, imageCoordinates, roiMat, coeffs, rotationVector, translation);
+
+    // Rotation vector to matrix
+    cv::Matx<double, 3, 3> rotationMatrix;
+    cv::Rodrigues(rotationVector, rotationMatrix);
+
+    return {rotationMatrix, translation};
+}
+
+tf2::Matrix3x3 tf2MatFromCV(const cv::Matx<tf2Scalar, 3, 3> &m) {
+    // clang-format off
+    return tf2::Matrix3x3(m(0, 0), m(0, 1), m(0, 2),
+                          m(1, 0), m(1, 1), m(1, 2),
+                          m(2, 0), m(2, 1), m(2, 2));
+    // clang-format on
+}
+
+tf2::Vector3 tf2VecFromCV(const cv::Vec<tf2Scalar, 3> &v) {
+    return tf2::Vector3(v(0), v(1), v(2));
+}
+
+SimulatorImageNode::SimulatorImageNode() :
+        Node("simulator_input"),
+        rx(SimulatorSHM::CLIENT, SHM_IMAGE_ID),
+        cameraFrameBroadcaster(this) {
+
+    // std::tie(camera_info, to_img) = conversions::messageFromCamParams(getSimParams());
 
     rx.attach();
 
@@ -45,7 +86,7 @@ SimulatorImageNode::SimulatorImageNode() :
     tf_msg.header.frame_id = "spatz";
     tf_msg.header.stamp = now();
     tf_msg.child_frame_id = "camera";
-    tf2::convert(tf2::Transform(conversions::tf2MatFromCV(rotMat), conversions::tf2VecFromCV(tvec)).inverse(),
+    tf2::convert(tf2::Transform(tf2MatFromCV(rotMat), tf2VecFromCV(tvec)).inverse(),
                  tf_msg.transform);
     cameraFrameBroadcaster.sendTransform(tf_msg);
 }
@@ -100,8 +141,8 @@ SimulatorImageNode::~SimulatorImageNode() {
     rx.detach();
 }
 
-camera::cameraParam SimulatorImageNode::getSimParams() {
-    camera::cameraParam simCamParam;
+static cameraParam getSimParams() {
+    cameraParam simCamParam;
     simCamParam.size = SIM_CAMERA_SIZE;
     simCamParam.camMat = SIM_CAMERA_MATRIX;
     simCamParam.distTanMat = SIM_TANGENTIAL_DISTORTION_COEFFICIENTS;
@@ -109,7 +150,11 @@ camera::cameraParam SimulatorImageNode::getSimParams() {
     simCamParam.roiMat = SIM_NEW_CAMERA_MATRIX;
     simCamParam.toImg = SIM_FLOORPLANE_TO_IMAGE_MATRIX;
     simCamParam.toCar = simCamParam.toImg.inv();
-    simCamParam.undistNeeded = false;
-    simCamParam.isSet = true;
     return simCamParam;
+}
+
+cv::Point2f cameraParam::transToImg(const cv::Point2f &carCord) const {
+    cv::Point3f car{carCord.x, carCord.y, 1};
+    cv::Point3f img = toImg * car;
+    return cv::Point2f{img.x / img.z, img.y / img.z};
 }

@@ -7,8 +7,6 @@
 
 #include <opencv2/core.hpp>
 
-#include "HardwareIO_SpatzX/lib/MsgIn.h"
-#include "HardwareIO_SpatzX/lib/RCMode.h"
 
 #define SHM_IMAGE_ID 428769
 #define SHM_HWIN_ID 428770

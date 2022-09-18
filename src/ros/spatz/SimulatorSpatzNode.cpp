@@ -5,10 +5,7 @@
  */
 
 #include "SimulatorSpatzNode.hpp"
-
-#include <Spatz/lib/SystemParams.hpp>
-#include <Util/ros/Conversions/spatz.hpp>
-#include <gsl/gsl>
+#include <std_msgs/msg/header.hpp>
 
 SimulatorSpatzNode::SimulatorSpatzNode() : Node("simulator_input"), rx(SimulatorSHM::CLIENT, SHM_HWIN_ID) {
     rx.attach();
@@ -42,7 +39,7 @@ void SimulatorSpatzNode::timerCallback() {
         if (prevPaused) {
             // If simulator is paused, we expect to not receive any data until unpaused
             bool success = spatzPublisher->assert_liveliness();
-            Expects(success); // This should only fail if publisher was configured incorrectly...
+            assert(success); // This should only fail if publisher was configured incorrectly...
         }
         return;
     }
@@ -51,8 +48,7 @@ void SimulatorSpatzNode::timerCallback() {
 
     // Build and publish spatz
     auto spatz = spatzFromHWIn(*inobj);
-    rclcpp::Time spatzTime =
-            rclcpp::Time(gsl::narrow_cast<int64_t>(spatz.getTSeconds() * std::nano::den), RCL_ROS_TIME);
+    rclcpp::Time spatzTime = spatz.header.stamp;
 
     if (spatzTime == lastSpatzTime) {
         rx.unlock(inobj);
@@ -63,15 +59,14 @@ void SimulatorSpatzNode::timerCallback() {
     RCLCPP_INFO(get_logger(), "publishing ros time %fs", spatzTime.seconds());
     clockPublisher->publish(rosgraph_msgs::build<rosgraph_msgs::msg::Clock>().clock(spatzTime));
 
-    RCLCPP_INFO(get_logger(), "publishing spatz at x=%f, y=%f, psi=%f", spatz.getPos().x, spatz.getPos().y,
-                spatz.getPsi());
-    spatzPublisher->publish(conversions::messageFromSpatz(spatz));
+    RCLCPP_INFO(get_logger(), "publishing spatz at x=%f, y=%f, psi=%f", spatz.pose.x, spatz.pose.y,
+                spatz.pose.z);
+    spatzPublisher->publish(spatz);
 
     // Publish rcmode if changed
     if (prevPaused != inobj->paused) {
-        hw::RCMode mode = inobj->paused ? hw::RCMode::remote : hw::RCMode::adtf;
         auto rcModeMessage = spatz_interfaces::msg::RCMode();
-        rcModeMessage.enabled = mode == hw::RCMode::remote;
+        rcModeMessage.enabled = inobj->paused;
         rcModePublisher->publish(rcModeMessage);
     }
     prevPaused = inobj->paused;
@@ -88,18 +83,30 @@ void SimulatorSpatzNode::onSpatzLivelinessLost(const rclcpp::QOSLivelinessLostIn
     RCLCPP_WARN(get_logger(), "Spatz publisher lost expected liveliness. Is simulator running?");
 }
 
-env::Spatz SimulatorSpatzNode::spatzFromHWIn(const HardwareIn &inobj) {
-    env::Spatz spatz{/*t = */ inobj.time,
-                     /*pose = */ math::Pose2d{inobj.x, inobj.y, inobj.psi},
-                     /*vel = */ math::v2d{inobj.velX, inobj.velY},
-                     /*acc = */ math::v3d{inobj.accX, inobj.accY, 0},
-                     /*dPsi = */ inobj.dPsi,
-                     /*steerAngleFront = */ inobj.steeringAngleFront,
-                     /*steerAngleRear = */ inobj.steeringAngleRear,
-                     /*laserFront = */ inobj.laserSensorValue,
-                     /*lightSwitchRear = */ inobj.binaryLightSensorTriggered,
-                     /*integratedDistance = */ inobj.drivenDistance,
-                     /*systemParams = */ spatz::systemParams};
+spatz_interfaces::msg::Spatz SimulatorSpatzNode::spatzFromHWIn(const HardwareIn &inobj) {
 
-    return spatz;
+    spatz_interfaces::msg::Spatz msg{};
+
+    msg.header = std_msgs::build<std_msgs::msg::Header>().stamp(
+            rclcpp::Time(inobj.time * std::nano::den, RCL_ROS_TIME)).frame_id("map");
+    msg.pose.x = inobj.x;
+    msg.pose.y = inobj.y;
+    msg.pose.z = inobj.psi;
+    msg.velocity.x = inobj.velX;
+    msg.velocity.y = inobj.velY;
+    msg.acceleration.x = inobj.accX;
+    msg.acceleration.y = inobj.accY;
+    msg.d_psi = inobj.dPsi;
+    msg.steer_angle_front = inobj.steeringAngleFront;
+    msg.steer_angle_rear = inobj.steeringAngleRear;
+    msg.laser_front = inobj.laserSensorValue;
+    msg.light_switch_rear = inobj.binaryLightSensorTriggered;
+    msg.integrated_distance = inobj.drivenDistance;
+
+    // Note: The system params are not set. For Team-Spatzenhirn internal code, these come from the SpatzLib,
+    // where the system parameters of our vehicle are located.
+    // It would probably be a good design to allow selection of the vehicle parameters/model in the simulator,
+    // and for the simulator to forward this to the SimulatorSpatzNode.
+
+    return msg;
 }

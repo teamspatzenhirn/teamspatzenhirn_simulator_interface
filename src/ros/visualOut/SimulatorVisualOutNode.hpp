@@ -7,8 +7,8 @@
 #ifndef SIMULATORFILTERS_SIMULATORVISUALOUTNODE_HPP
 #define SIMULATORFILTERS_SIMULATORVISUALOUTNODE_HPP
 
-#include <SimulatorFilters/lib/shm_ids.h>
-#include <SimulatorFilters/lib/shmcomm.h>
+#include <lib/shm_ids.h>
+#include <lib/shmcomm.h>
 #include <rclcpp/rclcpp.hpp>
 #include <spatz_interfaces/msg/trajectory.hpp>
 

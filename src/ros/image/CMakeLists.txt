@@ -4,21 +4,21 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(spatz_interfaces REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 
 project(SimulatorImageNodeLib)
-add_carolo_library(${PROJECT_NAME} SimulatorImageNode.cpp)
+add_library(${PROJECT_NAME} SimulatorImageNode.cpp)
 target_link_libraries(${PROJECT_NAME}
         opencv_core
         opencv_imgproc
         opencv_calib3d
-        LoggingLib
         SharedMemLib
-        rosUtil
-        opencvUtil
         SimCameraCalib)
-ament_target_dependencies(${PROJECT_NAME} rclcpp spatz_interfaces tf2_ros)
+ament_target_dependencies(${PROJECT_NAME} rclcpp spatz_interfaces tf2_ros sensor_msgs tf2_geometry_msgs)
 
 project(SimulatorImageNode)
-add_carolo_rosnode(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} main.cpp)
+default_install_binary(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} SimulatorImageNodeLib)
 ament_target_dependencies(${PROJECT_NAME} rclcpp)

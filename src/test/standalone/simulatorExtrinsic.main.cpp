@@ -6,7 +6,7 @@
  */
 
 
-#include <SimulatorFilters/lib/SimCameraCalib.hpp>
+#include <lib/SimCameraCalib.hpp>
 #include <opencv2/opencv.hpp>
 #include <tf2/LinearMath/Transform.h>
 #include <tf2/LinearMath/Vector3.h>

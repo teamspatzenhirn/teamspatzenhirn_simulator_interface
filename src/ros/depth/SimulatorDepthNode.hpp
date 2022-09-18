@@ -9,13 +9,9 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
-#include <spatz_interfaces/msg/extrinsic_calib.hpp>
-#include <tf2_ros/static_transform_broadcaster.h>
 
-#include "ImageProcessing/lib/cameraParams.h"
-#include "SimulatorFilters/lib/SimCameraCalib.hpp"
-#include "SimulatorFilters/lib/shm_ids.h"
-#include "SimulatorFilters/lib/shmcomm.h"
+#include "lib/shm_ids.h"
+#include "lib/shmcomm.h"
 
 /**
  * @brief Node receiving point clouds from simulator.

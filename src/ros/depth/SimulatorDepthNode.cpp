@@ -5,11 +5,9 @@
  */
 
 #include "SimulatorDepthNode.hpp"
+#include "lib/SimCameraCalib.hpp"
 
 #include <sensor_msgs/point_cloud2_iterator.hpp>
-
-#include "Util/ros/publishUtil.hpp"
-
 
 using namespace std::chrono_literals;
 
@@ -142,8 +140,13 @@ void SimulatorDepthNode::timer_callback() {
 
     RCLCPP_DEBUG(get_logger(), "Publishing fused pointclouds (filtered and normal)");
 
-    publishIfNeeded(pointCloudPublisher, std::move(pointCloudMessage));
-    publishIfNeeded(filteredPointCloudPublisher, std::move(filteredPointCloudMessage));
+    if (pointCloudPublisher->get_subscription_count() > 0) {
+        pointCloudPublisher->publish(std::move(pointCloudMessage));
+    }
+
+    if (filteredPointCloudPublisher->get_subscription_count() > 0) {
+        filteredPointCloudPublisher->publish(std::move(filteredPointCloudMessage));
+    }
 }
 
 SimulatorDepthNode::~SimulatorDepthNode() {

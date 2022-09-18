@@ -7,8 +7,8 @@
 #ifndef SIMULATORFILTERS_SIMULATOR_HARDWARE_OUT_NODE_HPP
 #define SIMULATORFILTERS_SIMULATOR_HARDWARE_OUT_NODE_HPP
 
-#include <SimulatorFilters/lib/shm_ids.h>
-#include <SimulatorFilters/lib/shmcomm.h>
+#include <lib/shm_ids.h>
+#include <lib/shmcomm.h>
 #include <rclcpp/rclcpp.hpp>
 #include <spatz_interfaces/msg/control_setpoint.hpp>
 
