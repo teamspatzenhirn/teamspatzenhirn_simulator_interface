@@ -1,4 +1,4 @@
-# Teamspatzenhirn Simulator Interface
+# Team Spatzenhirn Simulator ROS Interface
 
 This package contains ROS2 nodes for translating between the shared-memory interface of the simulator
 and ROS messages.
