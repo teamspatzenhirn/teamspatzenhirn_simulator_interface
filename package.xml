@@ -2,10 +2,10 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
     <name>teamspatzenhirn_simulator_interface</name>
-    <version>0.0.0</version>
+    <version>1.0.0</version>
     <description>ROS2 Interface for the Carolo-Cup Simulator of Team Spatzenhirn</description>
     <maintainer email="team-spatzenhirn@uni-ulm.de">Team Spatzenhirn</maintainer>
-    <license>TODO: License declaration</license>
+    <license>MIT</license>
 
     <buildtool_depend>ament_cmake</buildtool_depend>
 
